@@ -49,76 +49,75 @@
 
 #include <cstdint>
 #include <complex>
-#include <string>
 
 #include "Types.h"
+
+/**
+ * Radio Climate
+ */
+enum class RadioClimate : uint8_t {
+    Equatorial = 1,             /*!< Equatorial */
+            ContinentalSubtropical,     /*!< Continental Subtropical */
+            MaritimeTropical,           /*!< Maritime Tropical */
+            Desert,                     /*!< Desert */
+            ContinentalTemperate,       /*!< Continental Temperate */
+            MaritimeTemperateOverLand,  /*!< Maritime Temperate, Over Land */
+            MaritimeTemperateOverSea,   /*!< Maritime Temperate, Over Sea */
+};
+
+/**
+ * Error code of the Longley-Rice routines
+ */
+enum class Error : uint8_t {
+    NoError,                        /*!< No Error */
+    NearlyOutOfRange,               /*!< Some parameters are nearly out of range. Results should be used with caution. */
+    DefaultParamsSubstituted,       /*!< Default parameters have been substituted for impossible ones. */
+    ParameterCombinationOutOfRange, /*!< Warning: A combination of parameters is out of range. Results are probably invalid. */
+    Other                           /*!< Some parameters are out of range. Results are probably invalid. */
+};
+
+/**
+ * Antenna polarization
+ */
+enum class Polarization : uint8_t {
+    Horizontal,
+    Vertical
+};
+
+/**
+ * Propagation mode
+ */
+enum class PropagationMode : int8_t {
+    Undefined  = static_cast<int8_t>(-1),
+            LineOfSight = 0,
+            SingleHorizon = 4,
+            SingleHorizon_Diffraction = 5,
+            SingleHorizon_Troposcatter = 6,
+            DoubleHorizon = 8,
+            DoubleHorizon_Diffraction = 9,
+            DoubleHorizon_Troposcatter = 10
+};
+
+/**
+ * Site criteria for area calculation mode
+ */
+enum class SiteCriteria : uint8_t {
+    Random,        /*!< Random */
+    Careful,       /*!< Careful */
+    VeryCareful    /*!< Very Careful */
+};
+
+enum class VariabilityMode : uint8_t {
+    Single,
+    Individual,
+    Mobile,
+    Broadcast
+};
 
 class LongleyRiceITM {
 public:
     LongleyRiceITM();
     virtual ~LongleyRiceITM();
-
-    /**
-     * Radio Climante
-     */
-    enum class RadioClimate : uint8_t {
-        Equatorial = 1,             /*!< Equatorial */
-                ContinentalSubtropical,     /*!< Continental Subtropical */
-                MaritimeTropical,           /*!< Maritime Tropical */
-                Desert,                     /*!< Desert */
-                ContinentalTemperate,       /*!< Continental Temperate */
-                MaritimeTemperateOverLand,  /*!< Maritime Temperate, Over Land */
-                MaritimeTemperateOverSea,   /*!< Maritime Temperate, Over Sea */
-    };
-
-    /**
-     * Error code of the Longley-Rice routines
-     */
-    enum class Error : uint8_t {
-        NoError,                        /*!< No Error */
-        NearlyOutOfRange,               /*!< Some parameters are nearly out of range. Results should be used with caution. */
-        DefaultParamsSubstituted,       /*!< Default parameters have been substituted for impossible ones. */
-        ParameterCombinationOutOfRange, /*!< Warning: A combination of parameters is out of range. Results are probably invalid. */
-        Other                           /*!< Some parameters are out of range. Results are probably invalid. */
-    };
-
-    /**
-     * Antenna polarization
-     */
-    enum class Polarization : uint8_t {
-        Horizontal,
-        Vertical
-    };
-
-    /**
-     * Propagation mode
-     */
-    enum class PropagationMode : int8_t {
-        Undefined  = static_cast<int8_t>(-1),
-                LineOfSight = 0,
-                SingleHorizon = 4,
-                SingleHorizon_Diffraction = 5,
-                SingleHorizon_Troposcatter = 6,
-                DoubleHorizon = 8,
-                DoubleHorizon_Diffraction = 9,
-                DoubleHorizon_Troposcatter = 10
-    };
-
-    /**
-     * Site criteria for area calculation mode
-     */
-    enum class SiteCriteria : uint8_t {
-        Random,        /*!< Random */
-        Careful,       /*!< Careful */
-        VeryCareful    /*!< Very Careful */
-    };
-
-    enum class VariabilityMode : uint8_t {
-        Single,
-        Individual,
-        Mobile,
-        Broadcast
-    };
 
     /**
      * Point to point calculation
@@ -140,7 +139,7 @@ public:
      * @params[out]  horizons          Horizon distances
      * @params[out]  errnum            Error code
      */
-    void pointToPoint(const float64_t *const elev,
+    static void pointToPoint(const float64_t *const elev,
             const float64_t tht_m,
             const float64_t rht_m,
             const float64_t eps_dielect,
@@ -177,7 +176,7 @@ public:
      * @params[out]  deltaH
      * @params[out]  errnum            Error code
      */
-    void pointToPointMDH(const float64_t *const elev,
+    static void pointToPointMDH(const float64_t *const elev,
             const float64_t tht_m,
             const float64_t rht_m,
             const float64_t eps_dielect,
@@ -212,7 +211,7 @@ public:
      * @params[out]  deltaH
      * @params[out]  errnum            Error code
      */
-    void pointToPointDH(const float64_t *const elev,
+    static void pointToPointDH(const float64_t *const elev,
             const float64_t tht_m,
             const float64_t rht_m,
             const float64_t eps_dielect,
@@ -253,7 +252,7 @@ public:
      * @params[out]  dbloss            Loss in DB
      * @params[out]  errnum            Error code
      */
-    void area(const VariabilityMode ModVar,
+    static void area(const VariabilityMode ModVar,
             const float64_t deltaH,
             const float64_t tht_m,
             const float64_t rht_m,
@@ -275,8 +274,8 @@ private:
 
     enum class ControllingMode : int8_t {
         PointToPoint = static_cast<int8_t>(-1),   /*!< Point to point */
-        AreaContinuation,                         /*!< Area Continuation */
-         StartOfArea                               /*!< Start of Area */
+                AreaContinuation,                         /*!< Area Continuation */
+                StartOfArea                               /*!< Start of Area */
     };
 
     enum class ControlSwitch : uint8_t {
@@ -350,7 +349,7 @@ private:
      *
      * @return x-y if x is greater than y; otherwise result is 0.0
      */
-    float64_t FORTRAN_DIM(const float64_t x, const float64_t y);
+    static float64_t FORTRAN_DIM(const float64_t x, const float64_t y);
 
     /**
      * :13: single-knife attenuation, page 6
@@ -364,24 +363,24 @@ private:
      *
      * Note that the arguments to this function aren't v, but v^2
      */
-    float64_t Fn(const float64_t v_square);
+    static float64_t Fn(const float64_t v_square);
 
     /**
      * :14: page 6
      *
      * The heigh-gain over a smooth spherical earth -- to be used in the "three radii" mode. The approximation is that given in [Alg 6.4ff].
      */
-    float64_t F(const float64_t x, const float64_t K);
+    static float64_t F(const float64_t x, const float64_t K);
 
     /**
      * :25: Tropospheric scatter frequency gain, [Alg 6.10ff], page 12
      */
-    float64_t H_0(const float64_t r, const float64_t et);
+    static float64_t H_0(const float64_t r, const float64_t et);
 
     /**
      * :25: This is the F(\Theta d) function for scatter fields, page 12
      */
-    float64_t F_0(const float64_t td);
+    static float64_t F_0(const float64_t td);
 
     /**
      * :10: Diffraction attenuation, page 4
@@ -389,7 +388,7 @@ private:
      * The function adiff finds the "Diffraction attenuation" at the distance s. It uses a convex combination of smooth earth
      * diffraction and knife-edge diffraction.
      */
-    float64_t adiff(const float64_t s, prop_type &prop);
+    static float64_t adiff(const float64_t s, prop_type &prop);
 
     /**
      * :22: Scatter attenuation, page 9
@@ -400,10 +399,10 @@ private:
      *
      * One needs to get TN101, especially chaper 9, to understand this function.
      */
-    float64_t A_scat(const float64_t s, prop_type &prop);
+    static float64_t A_scat(const float64_t s, prop_type &prop);
 
 
-    float64_t abq_alos(const std::complex<float64_t> &r);
+    static float64_t abq_alos(const std::complex<float64_t> &r);
 
     /**
      * :17: line-of-sight attenuation, page 8
@@ -411,7 +410,7 @@ private:
      * The function alos finds the "line-of-sight attenuation" at the distance d. It uses a convex combination of plane earth
      * fields and diffracted fields. A call with d=0 sets up initial constants.
      */
-    float64_t A_los(const float64_t d, prop_type &prop);
+    static float64_t A_los(const float64_t d, prop_type &prop);
 
     /**
      * :5: LRprop, page 2
@@ -420,9 +419,9 @@ private:
      * the area mode, and when 0 we are continuing the area mode. The assumption is that when one uses the area mode, one will
      * want a sequence of results for varying distances.
      */
-    void lrprop(const float64_t d, prop_type &prop);
+    static void lrprop(const float64_t d, prop_type &prop);
 
-    void qlra(const SiteCriteria *const kst, const RadioClimate klimx, const VariabilityMode mdvarx, prop_type &prop, propv_type &propv);
+    static void qlra(const SiteCriteria *const kst, const RadioClimate klimx, const VariabilityMode mdvarx, prop_type &prop, propv_type &propv);
 
     /**
      * :51: Inverse of standard normal complementary probability
@@ -430,7 +429,7 @@ private:
      * The approximation is due to C. Hastings, Jr. ("Approximations for digital computers," Princeton Univ. Press, 1955) and the
      * maximum error should be  4.5e-4.
      */
-    float64_t qerfi(const float64_t q);
+    static float64_t qerfi(const float64_t q);
 
     /**
      * :41: preparatory routine, page 20
@@ -448,18 +447,18 @@ private:
      *
      * It may be used with either the area prediction or the point-to-point mode.
      */
-    void qlrps(const float64_t fmhz, const float64_t zsys, const float64_t en0, const Polarization ipol, const float64_t eps, const float64_t sgm, prop_type &prop);
+    static void qlrps(const float64_t fmhz, const float64_t zsys, const float64_t en0, const Polarization ipol, const float64_t eps, const float64_t sgm, prop_type &prop);
 
     /**
      * :30: Function curv, page 15
      */
-    float64_t curve(float64_t const c1, float64_t const c2, float64_t const x1, float64_t const x2, float64_t const x3, float64_t const de);
+    static float64_t curve(float64_t const c1, float64_t const c2, float64_t const x1, float64_t const x2, float64_t const x3, float64_t const de);
 
 
     /**
      *  :28: Area variablity, page 14
      */
-    float64_t avar(const float64_t zzt, const float64_t zzl, const float64_t zzc, prop_type &prop, propv_type &propv);
+    static float64_t avar(const float64_t zzt, const float64_t zzl, const float64_t zzc, prop_type &prop, propv_type &propv);
 
     /*
      * :45: Find to horizons, page 24
@@ -467,17 +466,17 @@ private:
      * Here we use the terrain profile @pfl to find the two horizons. Output consists of the horizon distances @dl and the horizon
      * take-off angles @the. If the path is line-of-sight, the routine sets both horizon distances equal to @dist.
      */
-    void hzns(const float64_t *const pfl, prop_type &prop);
+    static void hzns(const float64_t *const pfl, prop_type &prop);
 
     /**
      * :53: Linear least square fit, page 28
      */
-    void zlsq1(const float64_t *const z, const float64_t x1, const float64_t x2, float64_t& z0, float64_t& zn);
+    static void zlsq1(const float64_t *const z, const float64_t x1, const float64_t x2, float64_t& z0, float64_t& zn);
 
     /**
      * :52: Provide a quantile and reorders array @a, page 27
      */
-    float64_t qtile(const int32_t nn, float64_t *const a, const int32_t ir);
+    static float64_t qtile(const int32_t nn, float64_t *const a, const int32_t ir);
 
     /**
      * :41: Prepare model for point-to-point operation, page 22
@@ -491,14 +490,14 @@ private:
      *   pfl[0] = np, the number of points in the path
      *   pfl[1] = xi, the length of each increment
      */
-    void qlrpfl(const float64_t *const pfl, const RadioClimate klimx, const int32_t mdvarx, prop_type &prop, propv_type &propv);
+    static void qlrpfl(const float64_t *const pfl, const RadioClimate klimx, const int32_t mdvarx, prop_type &prop, propv_type &propv);
 
     /**
      * :48: Find interdecile range of elevations, page 25
      *
      * Using the terrain profile @pfl we find \Delta h, the interdecile range of elevations between the two points @x1 and @x2.
      */
-    float64_t dlthx(const float64_t *const pfl, const float64_t x1, const float64_t x2);
+    static float64_t dlthx(const float64_t *const pfl, const float64_t x1, const float64_t x2);
 };
 
 #endif /* LONGLEYRICEITM_H_ */
